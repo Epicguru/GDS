@@ -107,7 +107,7 @@ namespace Defs
             // Drop the item on the ground.
             //DroppedItem dropped = item.MakeDroppedItem();
 
-            Prefab p = DefDatabase.Get<Prefab>("TestPrefab");
+            Prefab p = DefDatabase.Get<Prefab>("SubPrefab");
             prefab = p.GameObject;
         }
 

@@ -20,6 +20,8 @@ namespace GDS
 
         public static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) != null;
 
+        public static bool CanBeNull(this Type type) => type.IsNullable() || !type.IsValueType;
+
         public static bool IsValueNode(this XmlNode node) => node.HasChildNodes && node.ChildNodes.Count == 1 && node.ChildNodes[0].NodeType == XmlNodeType.Text;
 
         public static void SetNodeValue(this XmlNode node, string txt)

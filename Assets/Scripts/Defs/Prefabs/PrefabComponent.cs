@@ -1,15 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Xml;
+using UnityEngine;
 
 namespace Defs.Prefabs
 {
     public class PrefabComponent
     {
-        public readonly Component Component;
-
-        public PrefabComponent(Component component)
-        {
-            this.Component = component;
-        }
+        public Component Component;
+        public XmlNode XmlNode;
 
         public override string ToString()
         {

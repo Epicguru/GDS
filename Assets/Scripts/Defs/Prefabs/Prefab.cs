@@ -24,9 +24,12 @@ namespace Defs.Prefabs
             report.AssertNotNull(Comps, nameof(Comps));
         }
 
-        public virtual GameObject Instantiate()
+        public virtual GameObject Instantiate(bool setActive = true)
         {
-            return null;
+            var instance = Object.Instantiate(GameObject);
+            if (setActive)
+                instance.SetActive(true);
+            return instance;
         }
     }
 }

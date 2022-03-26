@@ -229,6 +229,11 @@ namespace GDS
 
             foreach (XmlNode child in node.ChildNodes)
             {
+                if (child.NodeType != XmlNodeType.Comment && child.NodeType != XmlNodeType.Element && child.NodeType != XmlNodeType.EndElement && child.NodeType != XmlNodeType.Whitespace)
+                {
+                    Console.WriteLine($"Unexpected node of type {child.NodeType}: '{child.InnerText.Replace("\n", "")}' in class node '{node.Name}' of type {type.Name}. This is probably a mistake, check your XML. Perhaps you want to write a custom parser?");
+                }
+
                 if (child.NodeType != XmlNodeType.Element)
                     continue;
 
@@ -250,7 +255,14 @@ namespace GDS
                     Field = field,
                     Parent = instance
                 });
-                field.SetValue(instance, value);
+                if (value == null && !field.Type.CanBeNull())
+                {
+                    Console.WriteLine($"Node parsed into a null object, but the field {field.Path} cannot be assigned null! Ignoring assignment.");
+                }
+                else
+                {
+                    field.SetValue(instance, value);
+                }
             }
 
             MaybeInvokeConstructed(instance, node);

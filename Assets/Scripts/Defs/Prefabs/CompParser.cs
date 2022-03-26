@@ -17,7 +17,11 @@ namespace Defs.Prefabs
             var comp = go.AddComponent(type);
             context.GDSParser.PopulateClassFromXML(node, comp);
 
-            return new PrefabComponent(comp);
+            return new PrefabComponent()
+            {
+                Component = comp,
+                XmlNode = node
+            };
         }
     }
 }

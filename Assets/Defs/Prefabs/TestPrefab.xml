@@ -1,20 +1,33 @@
 ﻿
 <Defs>
 
-  <TestPrefab Class="Prefab">
-    <Comps IsList="True">
+  <!-- Prefab base def -->
+  <Prefab Abstract="true">
+    <Comps IsList="true"/>
+  </Prefab>
+
+  <OtherPrefab Parent="Prefab">
+
+  </OtherPrefab>
+
+  <!-- An example prefab -->
+  <MyPrefab Parent="Prefab">
+
+    <Label>My prefab</Label>
+    <Description>This is an example prefab.</Description>
+
+    <Comps>
       <UnityEngine.AudioSource>
-        <clip>Audio/MyClip</clip>
+        <clip>Assets/Audio/MyClip</clip>
+        <playOnAwake>false</playOnAwake>
+        <mute>false</mute>
       </UnityEngine.AudioSource>
-      <UnityEngine.SpriteRenderer/>
-      <UnityEngine.BoxCollider2D/>
-      <Items.Object.DroppedItem>
-        <A>1</A>
-        <B>2</B>
-        <C>4</C>
-        <Def>DevItem</Def>
-      </Items.Object.DroppedItem>
+
+      <OtherComponent>
+        <Reference>OtherPrefab</Reference>
+      </OtherComponent>
     </Comps>
-  </TestPrefab>
+
+  </MyPrefab>
 
 </Defs>
