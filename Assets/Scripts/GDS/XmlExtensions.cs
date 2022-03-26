@@ -127,6 +127,8 @@ namespace GDS
 
         public static string GetPath(this FieldInfo field) => $"{field.DeclaringType.FullName}.{field.Name}";
 
+        public static string GetPath(this PropertyInfo field) => $"{field.DeclaringType.FullName}.{field.Name}";
+
         public static string MakePrettyXml(this XmlNode node)
         {
             var str = new StringBuilder(512);

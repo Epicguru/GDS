@@ -1,10 +1,10 @@
-﻿using System;
+﻿using GDS.Parsers;
+using GDS.Refs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
-using GDS.Parsers;
-using GDS.Refs;
 
 namespace GDS
 {
@@ -123,7 +123,18 @@ namespace GDS
             }
         }
 
-        public object NodeToObject(XmlNode node, Type expectedType, in Context context)
+        public object PopulateClassFromXML(XmlNode root, object obj)
+        {
+            if (obj == null)
+                return null;
+            if (root == null)
+                return obj;
+
+            var type = obj.GetType();
+            return NodeToClass(root, type, false, obj);
+        }
+
+        private object NodeToObject(XmlNode node, Type expectedType, in Context context)
         {
             string overrideClass = node.TryGetAttr("Class");
             Type type = (overrideClass != null) ? this.Parser.ResolveType(overrideClass) : expectedType;
@@ -174,7 +185,7 @@ namespace GDS
                 return NodeToList(node, type, context);
 
             // Fall back to creating from class fields.
-            return NodeToClass(node, type, noRef);
+            return NodeToClass(node, type, noRef, null);
         }
 
         private object NodeToList(XmlNode node, Type type, in Context context)
@@ -188,13 +199,11 @@ namespace GDS
             bool noRef = node.EvaluateBoolAttribute("NoRef", false);
             var listType = type.GetFirstGenericArgument();
             var list = MakeGenericList(listType, node.ChildNodes.Count);
+            Console.WriteLine($"There are {node.ChildNodes.Count} list items...");
 
             foreach (XmlNode child in node.ChildNodes)
             {
                 if (child.NodeType != XmlNodeType.Element)
-                    continue;
-
-                if (!child.HasChildNodes)
                     continue;
 
                 int index = list.Count;
@@ -210,15 +219,14 @@ namespace GDS
             return list;
         }
 
-        private object NodeToClass(XmlNode node, Type type, bool noRef)
+        private object NodeToClass(XmlNode node, Type type, bool noRef, object existing)
         {
-            if (type.IsAbstract)
+            if (existing == null && type.IsAbstract)
                 throw new Exception($"Cannot do NodeToClass for abstract class: '{type.FullName}'");
 
-            var instance = Activator.CreateInstance(type);
+            var instance = existing ?? Activator.CreateInstance(type);
             var map = GetFieldMap(type);
 
-            bool anyNodes = false;
             foreach (XmlNode child in node.ChildNodes)
             {
                 if (child.NodeType != XmlNodeType.Element)
@@ -236,18 +244,14 @@ namespace GDS
                     continue;
                 }
 
-                Type subType = field.FieldType.ExtractUnderlyingType();
+                Type subType = field.Type.ExtractUnderlyingType();
                 var value = NodeToObject(child, subType, new Context()
                 {
                     Field = field,
                     Parent = instance
                 });
                 field.SetValue(instance, value);
-                anyNodes = true;
             }
-
-            if (!anyNodes)
-                Console.WriteLine($"Warning: No data provided for class node {node.Name}, of type {type.Name}."); 
 
             MaybeInvokeConstructed(instance, node);
             if (!noRef)
@@ -314,7 +318,7 @@ namespace GDS
         public struct Context
         {
             public object Parent;
-            public FieldInfo Field;
+            public FieldWrapper Field;
             public int? ListIndex;
             public bool ListNoRef;
         }

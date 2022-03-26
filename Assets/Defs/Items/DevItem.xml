@@ -6,6 +6,8 @@
     <Description>Development and debug item, for testing purposes.</Description>
     <Icon>Icons/DevIcon</Icon>
     <Speaker>Icons/Speaker</Speaker>
+    <Material>Icons/Test</Material>
+    <Mesh>Icons/Test</Mesh>
   </DevItem>
 
 </Defs>

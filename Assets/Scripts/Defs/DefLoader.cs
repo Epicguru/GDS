@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Defs.Prefabs;
+using Items;
+using Items.Object;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Utility;
@@ -17,16 +20,27 @@ namespace Defs
         private static GDSBuilder builder;
         private static GDSParserManager parserManager;
         private static readonly Dictionary<string, Type> localTypes = new Dictionary<string, Type>();
+        private static GameObject prefab;
 
         private static Type ResolveType(string name)
         {
             if (localTypes.TryGetValue(name, out var found))
                 return found;
-            return Type.GetType(name);
+            foreach (var ass in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                found = ass.GetType(name, false);
+                if (found != null)
+                    return found;
+            }
+
+            Debug.LogError($"Failed to find type '{name}'.");
+            return null;
         }
 
         private void Awake()
         {
+            PrefabManager.Init();
+
             UnitySystemConsoleRedirector.Redirect();
 
             foreach (var type in typeof(DefLoader).Assembly.GetTypes())
@@ -44,6 +58,8 @@ namespace Defs
                 }
                 localTypes.Add(name, type);
             }
+
+            DroppedItemProperties.DefaultPrefab = Addressables.LoadAssetAsync<GameObject>("Icons/DroppedItemPrefab").WaitForCompletion().GetComponent<DroppedItem>();
 
             StartLoad();
             Debug.Log(Application.dataPath);
@@ -81,6 +97,24 @@ namespace Defs
                 def.PostLoad();
 
             Debug.Log($"Finished loading {DefDatabase.TotalDefCount} defs.");
+
+            // Get def from database.
+            ItemDef d = DefDatabase.Get<ItemDef>("DevItem");
+
+            // Make an item from it.
+            Item item = d.MakeItem();
+
+            // Drop the item on the ground.
+            //DroppedItem dropped = item.MakeDroppedItem();
+
+            Prefab p = DefDatabase.Get<Prefab>("TestPrefab");
+            prefab = p.GameObject;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+                Instantiate(prefab);
         }
 
         public static void StartLoad()
@@ -188,6 +222,7 @@ namespace Defs
                         req.SupplyValue(handle.WaitForCompletion());
                         break;
                     }
+
 
                     if (isComp && item.ResourceType == typeof(GameObject))
                     {

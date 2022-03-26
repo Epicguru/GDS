@@ -9,8 +9,17 @@ namespace Defs
         public IReadOnlyList<LogItem> Errors => errors;
         public IReadOnlyList<LogItem> Warnings => warnings;
 
-        private List<LogItem> errors = new List<LogItem>();
-        private List<LogItem> warnings = new List<LogItem>();
+        private readonly List<LogItem> errors = new List<LogItem>();
+        private readonly List<LogItem> warnings = new List<LogItem>();
+
+        public bool AssertNotNull(object obj, string fieldName, string message = null)
+        {
+            if (obj != null)
+                return true;
+
+            Error(message ?? "Field cannot be null!", fieldName);
+            return false;
+        }
 
         public void Error(string message, string fieldName = null)
         {

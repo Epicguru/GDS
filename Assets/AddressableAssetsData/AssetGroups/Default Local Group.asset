@@ -25,6 +25,18 @@ MonoBehaviour:
     m_Address: Icons/Speaker
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: c6ffb567bc08a924dbbc83a343bb24e5
+    m_Address: Icons/Test
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f158fe865db663b4893c0ff012f3ff22
+    m_Address: Icons/DroppedItemPrefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0dca50a41aa90e94db3f4cd8754228b0
+    m_Address: Audio/MyClip
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: c3591c6eb7f549f4995087ad9da3d6ce, type: 2}
   m_SchemaSet:

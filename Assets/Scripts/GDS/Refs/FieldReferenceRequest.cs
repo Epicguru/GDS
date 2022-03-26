@@ -12,7 +12,7 @@ namespace GDS.Refs
             {
                 if (ListIndex != null)
                     return Owner.GetType().GetFirstGenericArgument();
-                return Field.FieldType;
+                return Field.Type;
             }
             set
             {
@@ -21,7 +21,7 @@ namespace GDS.Refs
         }
 
         public readonly object Owner;
-        public FieldInfo Field;
+        public FieldWrapper Field;
         public int? ListIndex;
 
         public FieldReferenceRequest(object owner, string refID)
@@ -54,9 +54,9 @@ namespace GDS.Refs
         public override string ToString()
         {
             if (ListIndex != null)
-                return $"[List: {Field.GetPath()}, #{ListIndex}] ({Owner.GetType().GetFirstGenericArgument().Name}) '{RefID}'";
+                return $"[List: {Field.Path}, #{ListIndex}] ({Owner.GetType().GetFirstGenericArgument().Name}) '{RefID}'";
 
-            return $"[Field: {Field.GetPath()}] ({Field.FieldType.Name}) '{RefID}'";
+            return $"[Field: {Field.Path}] ({Field.Type.Name}) '{RefID}'";
         }
     }
 }
