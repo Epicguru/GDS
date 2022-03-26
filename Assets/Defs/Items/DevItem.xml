@@ -1,0 +1,11 @@
+﻿
+<Defs>
+
+  <DevItem Parent="Item">
+    <Label>Dev item</Label>
+    <Description>Development and debug item, for testing purposes.</Description>
+    <Icon>Icons/DevIcon</Icon>
+    <Speaker>Icons/Speaker</Speaker>
+  </DevItem>
+
+</Defs>
